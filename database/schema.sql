@@ -1,0 +1,3 @@
+-- Script de criação do banco de dados Ecoleta
+-- (a ser detalhado com os comandos CREATE TABLE na próxima fase)
+-- Ver docs/diagramas/diagrama_der.png para o modelo completo.
