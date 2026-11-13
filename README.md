@@ -1,74 +1,75 @@
-# Ecoleta
+# Ecoleta — 2ª Entrega da AEP
 
-Plataforma web que conecta moradores a cooperativas de catadores para agendamento
-de coleta seletiva de materiais recicláveis, com acompanhamento de status e
-painel de impacto ambiental (kg reciclados e CO2 evitado).
+Plataforma web acadêmica para organizar solicitações de coleta seletiva, conectar moradores a cooperativas e acompanhar materiais recicláveis e impacto ambiental estimado.
 
-## ODS relacionados
-- ODS 11 — Cidades e Comunidades Sustentáveis
-- ODS 12 — Consumo e Produção Responsáveis
+## Tecnologias
+- PHP 8.3 ou superior (uso do atributo nativo `#[\\Override]`).
+- MySQL 8.0 ou MariaDB com InnoDB.
+- HTML5, CSS3 e JavaScript.
+- PDO para acesso ao banco de dados.
+- Organização em camadas, com MVC simplificado.
 
-## Stack tecnológica
-- Front-end: HTML5, CSS3, JavaScript
-- Back-end: PHP
-- Banco de dados: MySQL
+## Funcionalidades presentes
+- Cadastro, consulta, edição e exclusão de solicitações de coleta.
+- Associação de um ou mais materiais recicláveis a cada coleta.
+- Fluxo de situação: `solicitada` → `aceita` → `em_rota` → `concluida`, além de `cancelada`.
+- Seleção de PEV previamente cadastrado no banco.
+- Painéis demonstrativos de morador, catador e administrador.
+- Indicadores de coletas, quilogramas de materiais e CO₂ estimado evitado.
+- Persistência das coletas e materiais no MySQL.
 
-## Status do projeto
-Fase atual: **Concepção e planejamento arquitetural** (1º Bimestre).
-Nenhum código funcional foi implementado ainda — esta fase contém apenas a
-estrutura de diretórios e o projeto arquitetural (diagramas de classes e DER).
+O controller localiza os registros de demonstração pelo e-mail, sem depender de IDs fixos no código.
 
----
+## Orientação a objetos
+- Classe abstrata `Usuario`.
+- Herança por `Morador`, `Catador` e `Administrador`.
+- Polimorfismo por sobrescrita de `verPainel()` com `#[\\Override]`.
+- Composição entre `Coleta` e objetos `MaterialReciclavel`.
 
-## Lista de Requisitos
+## Estrutura
+```text
+ecoleta/
+├── README.md
+├── database/schema.sql
+├── docs/manual-execucao.md
+├── tests/testes-modelos.php
+├── public/
+│   ├── index.php
+│   ├── paineis/
+│   └── assets/
+└── src/
+    ├── config/Database.php
+    ├── controllers/ColetaController.php
+    └── models/
+```
 
-### Requisitos Funcionais (RF)
+## Como executar no Windows com XAMPP
+1. Instale XAMPP com PHP 8.3 ou superior e MySQL/MariaDB.
+2. Copie a pasta `ecoleta` para `C:\\xampp\\htdocs\\`.
+3. Inicie Apache e MySQL no painel do XAMPP.
+4. Importe `database/schema.sql` pelo phpMyAdmin.
+5. Confira as credenciais em `src/config/Database.php` (configuração padrão local: usuário `root`, senha vazia).
+6. Acesse `http://localhost/ecoleta/public/`.
 
-| Código | Descrição |
-|---|---|
-| RF01 | O sistema deve permitir o cadastro e a autenticação de usuários, nos perfis de morador, catador e administrador. |
-| RF02 | O morador deve poder cadastrar os materiais recicláveis que deseja descartar e solicitar uma coleta. |
-| RF03 | O morador deve poder escolher entre agendar uma coleta domiciliar ou realizar a entrega em um ponto de coleta (PEV) cadastrado. |
-| RF04 | O catador deve poder visualizar as solicitações de coleta filtradas por sua área de atuação. |
-| RF05 | O catador deve poder aceitar uma coleta e atualizar seu status ao longo do fluxo (aceita → em rota → concluída/cancelada). |
-| RF06 | O sistema deve calcular automaticamente o volume total reciclado e o CO2 evitado a partir dos materiais de cada coleta concluída. |
-| RF07 | O administrador deve poder gerenciar os usuários e os pontos de coleta cadastrados na plataforma. |
-| RF08 | O sistema deve exibir um painel de impacto ambiental, agregando os dados de coletas concluídas por morador, por cooperativa e de forma geral. |
-| RF09 | O sistema deve notificar os usuários sobre mudanças relevantes no status de suas coletas. |
-| RF10 | O sistema deve permitir o cadastro e a listagem de pontos de coleta (PEVs), com endereço e horário de funcionamento. |
+## Contas de demonstração
+- `morador@ecoleta.com` — morador
+- `catador@ecoleta.com` — catador
+- `admin@ecoleta.com` — administrador
+- Senha inicial dos registros: `password`.
 
-### Requisitos Não Funcionais (RNF)
+**Atenção:** os perfis são demonstrativos; esta versão não implementa autenticação/login real nem controle de acesso de produção. Não use essas credenciais em ambiente público.
 
-| Código | Descrição |
-|---|---|
-| RNF01 | **Usabilidade:** a interface deve ser simples e responsiva, utilizável por pessoas com pouca familiaridade digital. |
-| RNF02 | **Segurança:** as senhas dos usuários devem ser armazenadas de forma criptografada (hash), nunca em texto plano. |
-| RNF03 | **Desempenho:** as operações principais (login, agendamento de coleta, consulta de painel) não devem ultrapassar 3 segundos de resposta em condições normais de uso. |
-| RNF04 | **Portabilidade:** o sistema deve funcionar corretamente nos principais navegadores web (Chrome, Firefox, Edge). |
-| RNF05 | **Manutenibilidade:** o código deve seguir a separação em camadas (MVC), facilitando a manutenção e a evolução do sistema. |
-| RNF06 | **Disponibilidade:** o sistema deve estar acessível via navegador a qualquer momento, sem dependência de softwares adicionais no dispositivo do usuário final. |
+## Testes
+Execute `php tests/testes-modelos.php` no terminal, dentro da pasta do projeto. Os testes automatizados verificam regras dos modelos, cálculo de materiais e polimorfismo sem exigir conexão com o banco.
 
----
+A validação integrada de CRUD e persistência deve ser realizada com MySQL/MariaDB ativo. O roteiro está em `docs/manual-execucao.md`.
 
-## Cronograma (1º Bimestre)
+## Limitações conhecidas
+- Não há tela administrativa para cadastrar, editar ou excluir usuários e PEVs.
+- O formulário permite selecionar PEVs já cadastrados no banco.
+- Não há filtros de solicitações por região ou tipo de material.
+- As contas de demonstração não representam autenticação real.
+- A edição e a exclusão estão disponíveis na interface; recomenda-se demonstrá-las e confirmá-las no ambiente local antes da apresentação.
 
-| Semana | Atividade | Entregável |
-|---|---|---|
-| Semana 1 | Levantamento de requisitos: observação do cenário, identificação de dores e partes interessadas. | Seção "Descoberta" e lista preliminar de dores/regras de negócio. |
-| Semana 2 | Elaboração da lista de requisitos funcionais e não funcionais; definição da concepção do projeto e alinhamento com os ODS da ONU. | Lista de Requisitos e Seção "Concepção e Alinhamento". |
-| Semana 3 | Definição da arquitetura (MVC), escolha e justificativa da stack tecnológica (HTML/CSS/JS, PHP, MySQL). | Seção "Justificativa Técnica e Arquitetural". |
-| Semana 4 | Modelagem do domínio (diagrama de classes com herança, polimorfismo e composição) e modelagem do banco de dados (DER). | Diagrama de Classes e Diagrama do Banco de Dados (DER). |
-| Semana 5 | Criação do repositório no GitHub, organização da estrutura de diretórios e consolidação final da documentação. | Repositório público no GitHub e documento de entrega do 1º bimestre. |
-
----
-
-## Estrutura de pastas
-
-- `docs/` — documentação e diagramas do projeto
-- `database/` — script de criação do banco de dados 
-- `public/` — ponto de entrada da aplicação e arquivos estáticos
-- `src/config/` — arquivos de configuração 
-- `src/models/` — classes do domínio 
-- `src/controllers/` — lógica de controle das requisições
-- `src/views/` — páginas/templates exibidos ao usuário
-- `tests/` — reservado para testes automatizados 
+## Observações
+Os fatores de CO₂ são estimativas didáticas configuradas em `MaterialReciclavel.php`, não índices oficiais. Cada integrante deve realizar contribuições reais no GitHub, com commits identificáveis, conforme a orientação da AEP.
